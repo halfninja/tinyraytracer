@@ -1,0 +1,12 @@
+{
+    "include": [ "src" ],
+    "buildOptions": {
+        "incremental": true,
+    },
+    "compilerOptions": {
+        "target": "ES2021",
+        "module": "ES2022",
+        
+        "outDir": "js",
+    }
+}
