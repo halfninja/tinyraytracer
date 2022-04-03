@@ -1,5 +1,9 @@
 import * as log from './logger.js';
 
+function mapPixelComponent(f: number) {
+    return Math.min(255, Math.round(f * 255));
+}
+
 export default class CanvasOutput {
     width: number;
     height: number;
@@ -16,22 +20,36 @@ export default class CanvasOutput {
         canvas.setAttribute("height", height.toString());
         this.ctx = canvas.getContext('2d', {
             alpha: false,
-            antialias: false,
+            antialias: true,
         }) as CanvasRenderingContext2D;
+
+        
+        canvas.style.width = `${width/2}px`;
 
         this.data = this.ctx.createImageData(width, height, {  });
     }
 
-    setPixel(x, y, r, g, b) {
+    /**
+     * @param x X coordinate of pixel
+     * @param y Y coordinate of pixel
+     * @param r Red component of pixel (0..1)
+     * @param g Green component of pixel (0..1)
+     * @param b Blue component of pixel (0..1) 
+     */
+    setPixel(x: number, y: number, r: number, g: number, b: number) {
         // pixel data is a single RGBA array
         const offset = (x + y*this.width) * 4;
         const d = this.data.data;
-        d[offset+0] = r;
-        d[offset+1] = g;
-        d[offset+2] = b;
-        d[offset+3] = 255; // maximum alpha 💪
+        d[offset+0] = mapPixelComponent(r);
+        d[offset+1] = mapPixelComponent(g);
+        d[offset+2] = mapPixelComponent(b);
+        d[offset+3] = mapPixelComponent(1); // maximum alpha 💪
     }
 
+    /**
+     * Commit all pixels set by setPixel to the final image. The image may
+     * not display until this is called.
+     */
     endFrame() {
         this.ctx.putImageData(this.data, 0, 0);
     }
