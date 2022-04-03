@@ -5,9 +5,8 @@
 tasks:
   - name: Build and watch
     init: npm ci
-    command: npm run dev
+    command: python -m http.server 8000 & npm run dev
   - name: Start web server
-    command: python -m http.server 8000
 
 ports:
   - port: 8000
